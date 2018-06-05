@@ -12,34 +12,32 @@ function init(self)
 		end
 	end)
 
-	msg.post("gameover_hud", "disable")
 	self.score = 0
 
-	-- msg.post("#background_music", "play_sound")
+	msg.post("#background_music", "play_sound")
 end
 
 function final(self)
+	-- cancel timers
 	timer.cancel(self.spawn_timer)
+	if self.delay_timer then timer.cancel(self.delay_timer) end
+		
+	-- stop music
 	msg.post("#background_music", "stop_sound")
 end
 
-function on_input(self, action_id, action)
-	if action_id == hash("shoot") and action.pressed and self.is_game_over then
-		print "restarting game"
-		msg.post("main:/loader#loader", "change_scene", { scene_url = "#play_scene" })	
-	end
+function restart_game(self)
+	msg.post("main:/loader#loader", "change_scene", { scene_url = "#play_scene" })	
 end
 
 function on_message(self, message_id, message, sender)
 	if message_id == hash("enemy_dead") then
 		set_score(self, self.score + message.points)
 	elseif message_id == hash("ship_dead") then
-		start_game_over(self)
+		start_game_over(self)		
+	elseif message_id == hash("restart") then
+		restart_game(self)
 	end
-end
-
-function update(self, dt)
-	
 end
 
 function set_score(self, value)
@@ -54,28 +52,10 @@ function spawn_enemy(self)
 end
 
 function start_game_over(self)
+	self.is_game_over = true
+	
 	local DELAY = 1
-	local FADE_DURATION = 1
-	
-	msg.post(".", "acquire_input_focus")
-
-	local function fade_in(id, property, to_alpha)
-		go.set(id, property, 0)
-		go.animate(id, property, go.PLAYBACK_ONCE_FORWARD, to_alpha, go.EASING_INSINE, FADE_DURATION)
-	end
-	
-	local delay_timer = timer.seconds(DELAY, function (self)
-		self.is_game_over = true
-		
-		label.set_text("gameover_hud#points_label", self.score)
-		msg.post("gameover_hud", "enable")
-
-		-- fade in text labels
-		local objs = { "points_label", "gameover_label", "score_label", "restart_label"}
-		for _, id in ipairs(objs) do
-			fade_in("gameover_hud#" .. id, "color.w", 1)
-		end	
-		-- fade in background
-		fade_in("gameover_hud#background", "tint.w", 0.5)
+	self.delay_timer = timer.seconds(DELAY, function (self)
+		msg.post("/gameover_scene/scene#controller", "start", { score = self.score })
 	end)
 end

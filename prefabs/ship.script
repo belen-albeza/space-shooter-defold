@@ -7,11 +7,6 @@ function init(self)
 	self.dir = 0
 end
 
-function final(self)
-	-- Add finalization code here
-	-- Remove this function if not needed
-end
-
 function update(self, dt)
 	-- move ship
 	if self.dir ~= 0 then
@@ -30,6 +25,7 @@ function on_message(self, message_id, message, sender)
 	if message_id == hash("collision_response") then
 		msg.post("/scene", "ship_dead")
 		factory.create("/scene#explosions_factory")
+		go.delete()
 	end
 end
 
@@ -51,5 +47,4 @@ function on_input(self, action_id, action)
 		-- play sfx
 		msg.post("#shoot_sfx", "play_sound")
 	end
-		
 end

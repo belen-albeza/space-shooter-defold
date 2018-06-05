@@ -1,25 +1,11 @@
 go.property("start_scene", msg.url())
 
-
 function init(self)
 	self.current_scene = nil
 	self.next_scene = nil
-
-	print(go.get_id())
 	
 	msg.post(".", "acquire_input_focus")
-	-- msg.post("loader#play_scene", "load")
 	msg.post(".", "change_scene", {scene_url = self.start_scene})
-end
-
-function final(self)
-	-- Add finalization code here
-	-- Remove this function if not needed
-end
-
-function update(self, dt)
-	-- Add update code here
-	-- Remove this function if not needed
 end
 
 function on_message(self, message_id, message, sender)
@@ -33,12 +19,8 @@ function on_message(self, message_id, message, sender)
 		end
 
 	-- when a scene has finished unloading
-	elseif message_id == hash("proxy_unloaded") then
-		--print("scene unloaded successfully (" .. self.current_scene .. ")")
-		if self.next_scene then
-			print("loading now: ".. self.next_scene)
-			msg.post(self.next_scene, "load")
-		end
+	elseif message_id == hash("proxy_unloaded") and self.next_scene then
+		msg.post(self.next_scene, "load")
 
 	-- when a scene has finished loading
 	elseif message_id == hash("proxy_loaded") then
@@ -46,16 +28,5 @@ function on_message(self, message_id, message, sender)
 		msg.post(sender, "enable")
 		self.next_scene = nil
 		self.current_scene = sender
-		print("current scene is now: ".. self.current_scene)
 	end
-end
-
-function on_input(self, action_id, action)
-	-- Add input-handling code here
-	-- Remove this function if not needed
-end
-
-function on_reload(self)
-	-- Add reload-handling code here
-	-- Remove this function if not needed
 end

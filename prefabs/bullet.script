@@ -1,10 +1,5 @@
 local SPEED = 400
 
-function init(self)
-	-- Add initialization code here
-	-- Remove this function if not needed
-end
-
 function update(self, dt)
 	-- move upwards
 	go.set_position(go.get_position() + vmath.vector3(0, SPEED, 0) * dt)
@@ -13,9 +8,4 @@ function update(self, dt)
 	if go.get_position().y >= 512 then
 		go.delete()
 	end
-end
-
-function on_message(self, message_id, message, sender)
-	-- Add message-handling code here
-	-- Remove this function if not needed
 end

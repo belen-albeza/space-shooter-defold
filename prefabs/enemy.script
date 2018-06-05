@@ -20,8 +20,11 @@ end
 function on_message(self, message_id, message, sender)
 	if message_id == hash("collision_response") then
 		factory.create("/scene#explosions_factory")
-		msg.post("/scene", "enemy_dead", { points = 5 })
 		go.delete()
-		go.delete(message.other_id)
+
+		if message.group == hash("bullets") then
+			msg.post("/scene", "enemy_dead", { points = 5 })
+			go.delete(message.other_id)
+		end
 	end
 end
