@@ -1,0 +1,9 @@
+function init(self)
+	msg.post(".", "acquire_input_focus")
+end
+
+function on_input(self, action_id, action)
+	if action_id == hash("shoot") and action.pressed then
+		msg.post("main:/loader#loader", "change_scene", { scene_url = "#play_scene" })	
+	end
+end

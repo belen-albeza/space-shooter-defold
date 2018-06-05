@@ -1,0 +1,34 @@
+images {
+  image: "/builtins/graphics/particle_blob.png"
+}
+images {
+  image: "/assets/images/background.png"
+}
+images {
+  image: "/assets/images/ship.png"
+}
+images {
+  image: "/assets/images/bullet.png"
+}
+images {
+  image: "/assets/images/particle.png"
+}
+images {
+  image: "/assets/images/overlay.png"
+}
+animations {
+  id: "alien"
+  images {
+    image: "/assets/images/alien_00.png"
+  }
+  images {
+    image: "/assets/images/alien_01.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 2
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+margin: 0
+extrude_borders: 2
+inner_padding: 0

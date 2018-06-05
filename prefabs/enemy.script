@@ -1,0 +1,27 @@
+local MAX_SPEED_X = 50
+local MAX_SPEED_Y = 300
+
+function init(self)
+	local vel_x = math.random(-MAX_SPEED_X, MAX_SPEED_X)
+	local vel_y = -math.random(math.floor(MAX_SPEED_Y * 0.5), MAX_SPEED_Y)
+	self.velocity = vmath.vector3(vel_x, vel_y, 0)
+end
+
+function update(self, dt)
+	-- move
+	go.set_position(go.get_position() + self.velocity * dt)
+
+	-- destroy when it disappears below the screen
+	if (go.get_position().y <= -32) then
+		go.delete()
+	end
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("collision_response") then
+		factory.create("/scene#explosions_factory")
+		msg.post("/scene", "enemy_dead", { points = 5 })
+		go.delete()
+		go.delete(message.other_id)
+	end
+end

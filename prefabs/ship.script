@@ -1,0 +1,55 @@
+local SPEED = 380
+local MAX_X = 512
+local MIN_X = 0
+
+function init(self)
+	msg.post(".", "acquire_input_focus")
+	self.dir = 0
+end
+
+function final(self)
+	-- Add finalization code here
+	-- Remove this function if not needed
+end
+
+function update(self, dt)
+	-- move ship
+	if self.dir ~= 0 then
+		local inc = vmath.vector3(self.dir, 0, 0) * SPEED * dt
+		local new_position = go.get_position() + inc
+		new_position.x = math.min(math.max(MIN_X, new_position.x), MAX_X) -- clamp
+		
+		go.set_position(new_position)
+	end
+
+	-- reset direction to zero
+	self.dir = 0
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("collision_response") then
+		msg.post("/scene", "ship_dead")
+		factory.create("/scene#explosions_factory")
+	end
+end
+
+function on_input(self, action_id, action)
+	-- set direction according to input
+	if action_id == hash("left") then
+		self.dir = -1
+	elseif action_id == hash("right") then
+		self.dir = 1
+	end
+
+	-- shoot
+	if action_id == hash("shoot") and action.pressed then
+		-- spawn two bullets (left and right cannon)
+		local pos = go.get_position()
+		factory.create("#bullet_factory", pos + vmath.vector3(-14, 8, 0))
+		factory.create("#bullet_factory", pos + vmath.vector3(14, 8, 0))
+
+		-- play sfx
+		msg.post("#shoot_sfx", "play_sound")
+	end
+		
+end

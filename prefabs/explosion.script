@@ -1,0 +1,10 @@
+local function emitter_state_change(self, id, emitter, state)
+	if state == particlefx.EMITTER_STATE_SLEEPING then
+		go.delete()
+	end
+end
+
+function init(self)
+	particlefx.play("#particles", emitter_state_change)
+	msg.post("#sfx", "play_sound")
+end
